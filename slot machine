@@ -1,0 +1,116 @@
+import time
+import random
+#set players starting balance to 0
+def setstartbalance():
+    return 0
+#players wallet, handle depositing and balance
+def wallet(playermoney):
+    while True:
+        print("Please select which amount (1, 2, or 3) you would like to deposit.")
+        deposit = input('''
+1. $10
+2. $50
+3. $100
+''')
+        if deposit in ['1', '2', '3']:
+            break
+        else:
+            print('Invalid input. Please try again.')
+    depamount = 0
+    if deposit == '1':
+        depamount = 10
+    elif deposit == '2':
+        depamount = 50
+    elif deposit == '3':
+        depamount = 100
+    playermoney += depamount
+    print('You have selected to deposit $', depamount)
+    time.sleep(1)
+    print('Your total balance is now $', playermoney)
+    time.sleep(2)
+    more = input('Would you like to deposit more? y / n .')
+    if more == 'y':
+        return wallet(playermoney)
+    elif more == 'n':
+        print('Okay, taking you back into the game...')
+        time.sleep(3)
+#take player back into the game
+        return game(playermoney)
+#error handling
+    else:
+        print('Sorry, I didnt quite catch that.')
+        time.sleep(1.5)
+        return wallet(playermoney)
+
+#player bets an amount
+def game(playermoney):
+    print('Your balance is $', playermoney)
+    time.sleep(2)
+    bet = input('''Please select a bet amount: (1, 2 or 3), or type exit to end the game.
+1. $1
+2. $10
+3. $100                
+''')
+    if bet == '1':
+        bet = 1
+    elif bet == '2':
+        bet = 10
+    elif bet == '3':
+        bet = 100
+    elif bet == 'exit':
+        print('Thank you for playing. Goodbye!')
+        exit()
+    else:
+        print('Sorry, that wasnt quite right. Try again.')
+        time.sleep(3)
+        return game(playermoney)
+    print('You have bet $', bet)
+    playermoney -= bet
+    print('You now have $', playermoney, 'remaining.')
+    time.sleep(2)
+    return spin(playermoney, bet)
+#result is shown
+def spin(playermoney, bet):
+    l1 = random.randint(1,5)
+    l2 = random.randint(1,5)
+    r1 = random.randint(1,5)
+    r2 = random.randint(1,5)
+    print('Spinning the machine..')
+    time.sleep(2)
+    print(l1, l2, r1, r2)
+#rewards calculated, winnings logic
+    while playermoney > 0:
+        if l1 == l2 == r1 == r2:
+            playermoney += bet * 10
+            print("Congratulations! You have hit the jackpot. Enjoy your winnings!")
+            return game(playermoney)
+        elif l1 == l2 == r1:
+            playermoney += bet * 5
+            print("Congratulations! You have hit a minor jackpot. Enjoy your winnings!")
+            return game(playermoney)
+        elif l2 == r1 == r2:
+            playermoney += bet * 5
+            print("Congratulations! You have hit a minor jackpot. Enjoy your winnings!")
+            return game(playermoney)
+        elif l1 == l2 and r1 == r2 and l1 != r2:
+            print("Congratulations! You have hit a two pair. Enjoy your winnings!")
+            playermoney += bet *3
+            return game(playermoney)
+        elif l1 == l2 or l2 == r1 or r1 == r2:
+            playermoney += bet *2
+            print("You have hit a pair. Enjoy your winnings!")
+            return game(playermoney)
+        else:
+            restartgame = input("Unlucky! Would you like to play again? y / n")
+            if restartgame == 'y':
+                return game(playermoney)
+            else:
+                print('Thank you for playing. Goodbye!')
+                exit()
+#main function to call game
+def main():
+    playermoney = setstartbalance()
+    playermoney = wallet(playermoney)
+    playermoney = game(playermoney)
+    print("Final balance: $", playermoney)
+main()
